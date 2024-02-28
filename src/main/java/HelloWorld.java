@@ -10,5 +10,6 @@ public class HelloWorld extends JFrame {
     }
     public static void main(String[] args) {
         new HelloWorld().setVisible(true);
+        System.out.println("hello");
     }
 }
