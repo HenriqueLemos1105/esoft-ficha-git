@@ -31,7 +31,7 @@ public class CampoMinado {
         this.estado = new int[nrLinhas][nrColunas]; // Valores começam a 0
         this.primeiraJogada = true;
         this.jogadorDerrotado = false;
-        this.jogoTerminado = true;
+        this.jogoTerminado = false;
 
         for (var x = 0; x < nrLinhas; ++x) {
             for (var y = 0; y < nrColunas; ++y) {
@@ -69,24 +69,30 @@ public class CampoMinado {
 
         }
 
-        if (minas[x][y]) {
+        if (hasMina(x, y)) {
             estado[x][y] = REBENTADO;
             jogoTerminado = true;
             jogadorDerrotado = true;
             duracaoJogo = System.currentTimeMillis() - instanteInicioJogo;
-        } else if(isVitoria()) {
-                jogoTerminado = true;
-                jogadorDerrotado = false;
-                duracaoJogo = System.currentTimeMillis() - instanteInicioJogo;
+        } else {
+            int minasVizinhas = contarMinasVizinhas(x, y);
+            if(minasVizinhas == 0) {
+                estado[x][y] = VAZIO;
+                revelarQuadriculasVizinhas(x, y);
+            } else {
+                estado[x][y] = minasVizinhas;
+            }
+            if(isVitoria()) {
+            jogoTerminado = true;
+            jogadorDerrotado = false;
+            duracaoJogo = System.currentTimeMillis() - instanteInicioJogo;
+            }
+
+
+
         }
 
-        int minasVizinhas = contarMinasVizinhas(x, y);
-        if(minasVizinhas == 0) {
-            estado[x][y] = CampoMinado.VAZIO;
-            revelarQuadriculasVizinhas(x, y);
-        } else {
-            estado[x][y] = minasVizinhas;
-        }
+
     }
 
     public void marcarComoTendoMina(int x, int y){
@@ -149,7 +155,7 @@ public class CampoMinado {
         for (var i = Math.max(0, x - 1); i < Math.min(nrLinhas, x + 2); ++i) {
             for (var j = Math.max(0, y - 1); j < Math.min(nrColunas, y + 2); ++j)
             {
-                estado[i][j] = CampoMinado.TAPADO;
+                revelarQuadricula(i, j);
             }
         }
     }
